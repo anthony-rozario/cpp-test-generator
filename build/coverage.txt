@@ -1,0 +1,17 @@
+------------------------------------------------------------------------------
+                           GCC Code Coverage Report
+Directory: ..
+------------------------------------------------------------------------------
+File                                       Lines    Exec  Cover   Missing
+------------------------------------------------------------------------------
+build/_deps/googletest-src/googlemock/src/gmock_main.cc
+                                               4       0     0%   63,65,69-70
+build/_deps/googletest-src/googletest/src/gtest_main.cc
+                                               4       4   100%
+build/CMakeFiles/4.1.0-rc1/CompilerIdCXX/CMakeCXXCompilerId.cpp
+                                               9       0     0%   924,926-929,931,945-946,948
+input-code/add.cpp                             2       2   100%
+tests/test_add.cpp                            12      12   100%
+------------------------------------------------------------------------------
+TOTAL                                         31      18    58%
+------------------------------------------------------------------------------
