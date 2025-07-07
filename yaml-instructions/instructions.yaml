@@ -1,0 +1,8 @@
+task: Refine generated C++ unit tests
+goals:
+  - Remove duplicate tests
+  - Add missing includes (like `#include <gtest/gtest.h>` or `#include <cassert>`)
+  - Format the code properly
+  - Ensure the test functions follow GoogleTest structure
+  - Make sure function calls (like `add`) exist and have correct signature
+output: A single refined test file compatible with GoogleTest framework and the output code should be formatted properly no extra comments or explanations only give the code nothing else should be present
