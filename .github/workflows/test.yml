@@ -1,43 +1,45 @@
-name: C++ CI with Coverage
+name: C++ Tests and Coverage
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ⬇️ Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: 🛠️ Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y cmake g++ lcov gcovr
+      - name: Set up CMake
+        uses: jwlawson/actions-setup-cmake@v1.13
 
-    - name: 🏗️ Configure project with coverage flags
-      run: |
-        cmake -DCMAKE_CXX_FLAGS="--coverage" -B build
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y g++ lcov gcovr make cmake
 
-    - name: 🔨 Build the project
-      run: |
-        cmake --build build
+      - name: Clean previous build cache
+        run: rm -rf build
 
-    - name: ✅ Run tests
-      run: |
-        ./build/main_test
+      - name: Configure with coverage flags
+        run: cmake -DCMAKE_CXX_FLAGS="--coverage" -B build
 
-    - name: 📊 Generate coverage report
-      run: |
-        gcovr -r . --txt --html --html-details -o build/coverage.html
-        gcovr -r . > build/coverage.txt
+      - name: Build
+        run: cmake --build build
 
-    - name: 📦 Upload HTML coverage report as artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: build/coverage.html
+      - name: Run tests
+        run: ./build/main_test
+
+      - name: Generate coverage report
+        run: |
+          pip install gcovr
+          gcovr -r . > build/coverage.txt
+          gcovr -r . --html --html-details -o build/coverage.html
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: build/coverage.html
