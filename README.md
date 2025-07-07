@@ -1,148 +1,11 @@
+# 🧪 C++ Test Generator with Code Coverage and GitHub Actions CI/CD
 
-# 🧪 C++ Unit Test Generator using LLM + GoogleTest
+This project demonstrates a complete automated workflow for:
 
-This project automates the generation of **GoogleTest-based unit tests** for C++ functions using a **local LLM model (CodeLlama via Ollama)** and tools like `CMake`, `MinGW`, and `gcov` for building and analyzing test coverage.
-
----
-
-## 📦 Features
-
-- Generates GoogleTest-compatible unit test files using LLM
-- Supports real-time prompt customization via YAML
-- Compiles and runs unit tests using CMake & MinGW
-- Displays detailed test results via GoogleTest
-- Collects and displays code coverage using `gcov`
-
----
-
-## 🚀 Prerequisites
-
-Ensure the following tools are installed:
-
-| Tool          | Version / Notes |
-|---------------|-----------------|
-| [Python](https://python.org) | ≥ 3.10 |
-| [Git](https://git-scm.com) | any |
-| [CMake](https://cmake.org) | ≥ 3.25 |
-| [MinGW](https://www.mingw-w64.org/) | with g++ |
-| [Ollama](https://ollama.com/) | installed and running |
-| GoogleTest | auto-downloaded via FetchContent |
-
----
-
-## 🔧 Setup
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/anthony-rozario/cpp-test-generator.git
-cd cpp-test-generator
-```
-
----
-
-### 2. Set Up Ollama with CodeLlama
-
-Ensure Ollama is running and pull the `codellama` model:
-
-```bash
-ollama run codellama
-```
-
-> You should see `>>>` prompt confirming the model is running.
-
----
-
-## 🧠 Usage
-
-### Step 1: Add Your C++ Code
-
-Put your implementation in:
-
-```
-input-code/add.cpp
-input-code/add.h
-```
-
-Example `add.cpp`:
-
-```cpp
-int add(int a, int b) {
-    return a + b;
-}
-```
-
-And `add.h`:
-
-```cpp
-int add(int a, int b);
-```
-
----
-
-### Step 2: Customize LLM Instructions (Optional)
-
-Edit `yaml-instructions/instructions.yaml` to control how the unit tests are generated (e.g., require edge cases, style preferences, etc.).
-
----
-
-### Step 3: Generate Unit Tests Using Python Script
-
-```bash
-python main.py
-```
-
-This script:
-- Loads your implementation
-- Sends it to the LLM
-- Writes test cases to `tests/test_add.cpp`
-
----
-
-### Step 4: Build the Project with Code Coverage
-
-```bash
-cmake -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS="--coverage" -B build
-cd build
-mingw32-make
-```
-
----
-
-### Step 5: Run Unit Tests
-
-```bash
-./main_test.exe
-```
-
-You should see output like:
-
-```
-[==========] Running 4 tests from 1 test suite.
-[----------] 4 tests from AddTest
-[ RUN      ] AddTest.AddsTwoNumbers
-[       OK ] AddTest.AddsTwoNumbers (0 ms)
-...
-[  PASSED  ] 4 tests.
-```
-
----
-
-### Step 6: Generate Coverage Report
-
-```bash
-gcov ../input-code/add.cpp -o CMakeFiles/main_test.dir/input-code
-```
-
-Expected output:
-
-```
-File 'add.cpp'
-Lines executed:100.00% of 4
-Creating 'add.cpp.gcov'
-```
-
-You’ll get a `.gcov` file showing which lines were covered by tests.
+- Writing and organizing C++ code
+- Generating GoogleTest-based unit tests
+- Measuring code coverage with `gcov` and `gcovr`
+- Automating builds and coverage reporting using GitHub Actions
 
 ---
 
@@ -150,71 +13,202 @@ You’ll get a `.gcov` file showing which lines were covered by tests.
 
 ```
 cpp-test-generator/
-│
-├── input-code/              # Your C++ implementation
-│   ├── add.cpp
-│   └── add.h
-│
-├── tests/                   # Auto-generated GoogleTest tests
-│   └── test_add.cpp
-│
-├── yaml-instructions/       # Optional YAML prompt for LLM
-│   └── instructions.yaml
-│
-├── main.py                  # Python script for test generation
-├── CMakeLists.txt
-└── build/                   # Build artifacts
+├── input-code/ # Source C++ files to be tested
+│ └── add.cpp
+├── include/ # Header files
+│ └── add.h
+├── tests/ # GoogleTest unit tests
+│ └── test_add.cpp
+├── yaml-instructions/ # AI/test generator instructions (YAML)
+├── .github/workflows/ # GitHub Actions CI/CD workflows
+│ └── ci.yml
+├── build/ # Auto-generated build and coverage results (ignored in git)
+├── run.sh # Bash script to automate test + coverage (Linux)
+├── run.bat # Batch file to automate test + coverage (Windows)
+├── CMakeLists.txt # CMake project configuration
+└── README.md # This file
 ```
 
 ---
 
-## ✅ Example Generated Test
+## 🔧 Requirements
 
+Install the following tools before starting:
+
+### 🖥️ Windows
+
+- [CMake](https://cmake.org/download/)
+- [MinGW](https://sourceforge.net/projects/mingw/)
+- [Python](https://www.python.org/downloads/) (`>=3.10`)
+- `gcovr` via pip:
+
+  ```bash
+  pip install gcovr
+  ```
+
+Ensure g++, cmake, and gcovr are all accessible from your terminal (i.e., added to PATH).
+
+### 🚀 How to Run Locally
+#### ✅ Step-by-Step Instructions (Windows)
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/anthony-rozario/cpp-test-generator.git
+cd cpp-test-generator
+```
+### 2. Run the full build and test pipeline
+
+You can run the automated batch script instead of running commands manually:
+
+```bash
+run.bat
+```
+
+What it does:
+- Cleans any previous build
+- Re-runs cmake with coverage flags
+- Builds using mingw32-make
+- Executes tests using GoogleTest
+- Generates coverage reports (HTML and CLI)
+
+### 3. View Coverage Report
+After successful execution, open the file:
+
+```bash
+build/coverage.html
+```
+
+This will show a full breakdown of which lines and functions were covered during tests.
+
+### 🧪 Example Code Tested
+``` add.cpp (inside input-code/)```
 ```cpp
+
+#include "add.h"
+
+long long add(long long a, long long b) {
+    return a + b;
+}
+test_add.cpp (inside tests/)
+cpp
+Copy
+Edit
 #include <gtest/gtest.h>
 #include "add.h"
 
 TEST(AddTest, AddsTwoNumbers) {
-  EXPECT_EQ(add(2, 3), 5);
+    EXPECT_EQ(add(2, 3), 5);
 }
 
 TEST(AddTest, HandlesNegativeNumbers) {
-  EXPECT_EQ(add(-1, -2), -3);
+    EXPECT_EQ(add(-2, -5), -7);
 }
 
 TEST(AddTest, HandlesLargeNumbers) {
-  EXPECT_EQ(add(INT_MAX, 0), INT_MAX);
+    EXPECT_EQ(add(1e9, 1e9), 2e9);
+}
+
+TEST(AddTest, HandlesWrappedAroundNumbers) {
+    EXPECT_EQ(add(LLONG_MAX, 0), LLONG_MAX);
 }
 ```
 
----
+### 🤖 GitHub Actions CI/CD
 
-## 🧽 Clean Up
+This repo uses GitHub Actions to:
+- Run tests automatically on each push
+- Generate a coverage report on the GitHub runner
+- Confirm that tests always pass before merging code
 
-To reset the build and test results:
+CI File: .github/workflows/ci.yml
 
-```bash
-rd /s /q build
+```yaml
+name: C++ Tests and Coverage
+
+on: [push, pull_request]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y g++ cmake lcov python3-pip
+          pip install gcovr
+
+      - name: Configure and build
+        run: |
+          cmake -DCMAKE_CXX_FLAGS="--coverage" -B build
+          cmake --build build
+
+      - name: Run tests
+        run: |
+          cd build
+          ./main_test
+
+      - name: Generate coverage report
+        run: |
+          cd build
+          gcovr -r .. > coverage.txt
+          gcovr -r .. --html --html-details -o coverage.html
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: code-coverage-report
+          path: build/coverage.html
+
 ```
 
-Then rebuild:
-
+### 🔁 Re-run Tests Locally (Manual)
 ```bash
+# Clean old build
+rd /s /q build
+
+# Reconfigure CMake
 cmake -G "MinGW Makefiles" -DCMAKE_CXX_COMPILER=g++ -DCMAKE_CXX_FLAGS="--coverage" -B build
 cd build
+
+# Build using mingw32-make
 mingw32-make
+
+# Run test binary
+main_test.exe
+
+# Generate coverage
+gcovr -r .. > coverage.txt
+gcovr -r .. --html --html-details -o coverage.html
 ```
 
+### 📊 Sample Coverage Output
+- 100% Line coverage for add.cpp
+- 100% Line + Function coverage for test files
+- Branch coverage depends on logic complexity
+
+(if available)
+
+### 🧠 Summary
+
+This repo serves as a complete boilerplate/template for any C++ project requiring:
+- Structured source/test layout
+- Unit testing with GoogleTest
+- Coverage reporting using gcov + gcovr
+- CI automation with GitHub Actions
+
+## 📌 Notes
+
+- `.gcda` and `.gcno` files are automatically handled when using `--coverage` flag.
+- `gcovr` makes the process portable across platforms.
+- You can test multiple `.cpp` files by placing them in `input-code/` and adding appropriate tests.
+
 ---
 
-## 💡 Future Improvements
-
-- Support for more compilers and platforms
-- Generate mocks for dependencies
-- Generate CTest-compatible results
-- Web UI for prompt & test generation
-
----
+### 📬 Feedback & Contributions
+Feel free to fork, improve, and submit pull requests. Let's make C++ testing easier for everyone 🚀
 
 ## 🛠 Maintainer
 
@@ -222,8 +216,6 @@ mingw32-make
 🎓 MCA, KIIT University  
 🔗 [LinkedIn](https://www.linkedin.com/in/anthony-rozario) | [GitHub](https://github.com/anthony-rozario)
 
----
+## 📃 License
 
-## 📝 License
-
-MIT License
+MIT License.
